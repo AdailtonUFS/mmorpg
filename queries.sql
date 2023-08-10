@@ -146,6 +146,7 @@ CREATE TABLE IF NOT EXISTS characters(
 	critical REAL NOT NULL,
 	life REAL NOT NULL,
 	honor INT,
+	created_at TIMESTAMP NOT NULL,
 	description VARCHAR(200),
 	FOREIGN KEY (account_id) REFERENCES accounts (id),
 	FOREIGN KEY (class_id) REFERENCES classes (id)
