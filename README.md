@@ -10,14 +10,14 @@ Adailton Moura da Silva (contatoadailtonmoura@gmail.com)
 Dean Vinicius Palmeira Meneses (deanvinicius2003@gmail.com)
 
 ## Projeto Conceitual
-![Diagram](conceitual_project_diagram.png)
+![Diagram](/concepts/conceitual_project_diagram.png)
 
 
 ## Projeto Lógico MYSQL WORKBENCH
 Diagrama de projeto lógico feito no mysql workbench
-![Logic Project Diagram Workbench](logic_project_diagram_workbench.png)
+![Logic Project Diagram Workbench](/concepts/logic_project_diagram_workbench.png)
 
 
 ## Projeto Lógico DBEAVER
 Diagrama gerado pelo DBEAVER no RDS
-![Logic Project Diagram DBEAVER](mmorpg_database_DBEAVER.png)
+![Logic Project Diagram DBEAVER](/concepts/mmorpg_database_DBEAVER.png)
