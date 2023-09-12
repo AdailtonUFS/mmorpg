@@ -2,10 +2,10 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
@@ -34,8 +34,16 @@ class Handler extends ExceptionHandler
     }
     public function render($request, Throwable $e): \Illuminate\Http\Response|JsonResponse|RedirectResponse|Response
     {
-        if ($e instanceof ModelNotFoundException || $e instanceof NotFoundHttpException) {
-            return response()->json(['message' => 'Endpoint não encontrado.'], 404);
+        if ($e instanceof NotFoundHttpException) {
+            return response()->json(['message' => 'Endpoint not found.'], 404);
+        }
+
+        if ($e instanceof ValidationException) {
+            $errors = [];
+            foreach ($e->validator->errors()->getMessages() as $errorMessages){
+                $errors[] = $errorMessages[0];
+            }
+            return response()->json(['errors' => $errors], 400);
         }
 
         return parent::render($request, $e);
