@@ -29,9 +29,9 @@ class UserController extends Controller
         $userCreated = $user->save();
 
         if (!$userCreated) {
-            return response()->json('Algum erro ocorreu');
+            return response()->json('An error occurred', 500);
         }
-        return response()->json('Usuário criado com sucesso!');
+        return response()->json(['message' => 'User stored with successful'], 201);
     }
 
     public function show(User $user): JsonResponse
@@ -43,22 +43,23 @@ class UserController extends Controller
     {
         $data = $request->validated();
         if (!$data) {
-            return response()->json('Usuário atualizado com sucesso!');
+            return response()->json(['message' => 'User updated with successful']);
         }
         $userUpdated = $user->update($data);
 
         if (!$userUpdated) {
-            return response()->json('Algum erro ocorreu');
+            return response()->json('An error occurred', 500);
         }
-        return response()->json('Usuário atualizado com sucesso!');
+        return response()->json(['message' => 'User updated with successful']);
     }
 
     public function destroy(User $user): JsonResponse
     {
         $userDeleted = $user->delete();
+
         if (!$userDeleted) {
-            return response()->json('Algum erro ocorreu');
+            return response()->json('An error occurred', 500);
         }
-        return response()->json('Usuário deletado com sucesso!');
+        return response()->json(['message' => 'User deleted with successful']);
     }
 }
