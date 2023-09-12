@@ -20,4 +20,21 @@ class StoreUserRequest extends FormRequest
             'password' => 'required'
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'A name is required',
+            'name.string' => 'A name does not contain numbers',
+            'name.max' => 'The name cannot be longer than 255 characters',
+
+            'cpf.required' => 'A cpf is required',
+            'cpf.unique' => 'Cpf already exists',
+
+            'email.required' => 'An email is required',
+            'email.unique' => 'Email already exists',
+
+            'password.required' => 'A password is required',
+        ];
+    }
 }
