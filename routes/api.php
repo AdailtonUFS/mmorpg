@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\ServerController;
 use App\Http\Controllers\API\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::apiResource('/users', UserController::class);
-//Route::fallback(function(){
-//    return response()->json(['message' => 'Endpoint não encontrado.'], 404);
-//});
+Route::apiResource('/servers', ServerController::class);
+
+Route::fallback(function(){
+    return response()->json(['message' => 'Endpoint não encontrado.'], 404);
+});
