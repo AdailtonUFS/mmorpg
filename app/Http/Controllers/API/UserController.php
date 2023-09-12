@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\StoreUserRequest;
-use App\Http\Requests\API\UpdateUserRequest;
+use App\Http\Requests\API\User\UpdateUserRequest;
+use App\Http\Requests\API\User\StoreUserRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
