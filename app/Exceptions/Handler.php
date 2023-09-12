@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -32,15 +33,22 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
     public function render($request, Throwable $e): \Illuminate\Http\Response|JsonResponse|RedirectResponse|Response
     {
         if ($e instanceof NotFoundHttpException) {
             return response()->json(['message' => 'Endpoint not found.'], 404);
         }
 
+        if ($e instanceof ModelNotFoundException) {
+            $model = explode('\\', $e->getModel());
+            $model_name = end($model);
+            return response()->json(['message' => "$model_name not found."], 404);
+        }
+
         if ($e instanceof ValidationException) {
             $errors = [];
-            foreach ($e->validator->errors()->getMessages() as $errorMessages){
+            foreach ($e->validator->errors()->getMessages() as $errorMessages) {
                 $errors[] = $errorMessages[0];
             }
             return response()->json(['errors' => $errors], 400);
