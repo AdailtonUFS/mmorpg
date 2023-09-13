@@ -38,7 +38,6 @@ class ServerController extends Controller
     public function update(UpdateServerRequest $request, Server $server): JsonResponse
     {
         $serverNewData = $request->validated();
-        dump($serverNewData);
         if (!$serverNewData) {
             return response()->json(['message' => 'Server updated with successful']);
         }
