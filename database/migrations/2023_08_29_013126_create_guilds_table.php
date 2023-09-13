@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('server_id')->constrained();
             $table->string('name', 50)->unique();
-            $table->unsignedSmallInteger('level');
-            $table->string('shield_file_url');
+            $table->unsignedSmallInteger('level')->default(0);
+            $table->string('shield_file_url')->nullable();
             $table->string('description');
             $table->timestamps();
         });
