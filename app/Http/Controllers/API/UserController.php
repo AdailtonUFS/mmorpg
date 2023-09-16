@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\User\UpdateUserRequest;
 use App\Http\Requests\API\User\StoreUserRequest;
+use App\Http\Requests\API\User\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
@@ -14,7 +14,7 @@ class UserController extends Controller
     public function index(): JsonResponse
     {
         $users = User::all();
-        return response()->json(data: $users);
+        return $this->allResponse($users);
     }
 
     public function store(StoreUserRequest $request): JsonResponse
@@ -26,40 +26,31 @@ class UserController extends Controller
         $user->name = $data['name'];
         $user->email = $data['email'];
         $user->password = Hash::make($data['password']);
-        $userCreated = $user->save();
+        $stored = $user->save();
 
-        if (!$userCreated) {
-            return response()->json('An error occurred', 500);
-        }
-        return response()->json(['message' => 'User stored with successful'], 201);
+        return $this->storedResponse($stored, "User");
     }
 
     public function show(User $user): JsonResponse
     {
-        return response()->json(data: $user);
+        return $this->showResponse($user);
     }
 
     public function update(UpdateUserRequest $request, User $user): JsonResponse
     {
-        $data = $request->validated();
-        if (!$data) {
-            return response()->json(['message' => 'User updated with successful']);
-        }
-        $userUpdated = $user->update($data);
+        $userNewData = $request->validated();
 
-        if (!$userUpdated) {
-            return response()->json('An error occurred', 500);
+        if (!$userNewData) {
+            return $this->updateResponse("User");
         }
-        return response()->json(['message' => 'User updated with successful']);
+
+        $updated = $user->update($userNewData);
+        return $this->updatedResponse($updated, "User");
     }
 
     public function destroy(User $user): JsonResponse
     {
-        $userDeleted = $user->delete();
-
-        if (!$userDeleted) {
-            return response()->json('An error occurred', 500);
-        }
-        return response()->json(['message' => 'User deleted with successful']);
+        $deleted = $user->delete();
+        return $this->deletedResponse($deleted, "User");
     }
 }

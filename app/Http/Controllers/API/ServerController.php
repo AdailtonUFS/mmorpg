@@ -14,50 +14,40 @@ class ServerController extends Controller
     public function index(): JsonResponse
     {
         $servers = Server::all();
-        return response()->json(data: $servers);
+        return $this->allResponse($servers);
     }
 
     public function store(StoreServerRequest $request): JsonResponse
     {
         $serverData = $request->validated();
+
         $server = new Server();
         $server->name = $serverData['name'];
-        $serverCreated = $server->save();
+        $stored = $server->save();
 
-        if (!$serverCreated) {
-            return response()->json('An error occurred', 500);
-        }
-        return response()->json(['message' => 'Server stored with successful'], 201);
+        return $this->storedResponse($stored, "Server");
     }
 
     public function show(Server $server): JsonResponse
     {
-        return response()->json(data: $server);
+        return $this->showResponse($server);
     }
 
     public function update(UpdateServerRequest $request, Server $server): JsonResponse
     {
         $serverNewData = $request->validated();
+
         if (!$serverNewData) {
-            return response()->json(['message' => 'Server updated with successful']);
-        }
-        $serverUpdated = $server->update($serverNewData);
-
-        if (!$serverUpdated) {
-            return response()->json('An error occurred', 500);
+            return $this->updateResponse("Server");
         }
 
-        return response()->json(['message' => 'Server updated with successful'], 201);
+        $updated = $server->update($serverNewData);
+        return $this->updatedResponse($updated, "Server");
     }
 
     public function destroy(Server $server): JsonResponse
     {
-        $serverDeleted = $server->delete();
-
-        if (!$serverDeleted) {
-            return response()->json('An error occurred', 500);
-        }
-
-        return response()->json(['message' => 'Server deleted with successful'], 201);
+        $deleted = $server->delete();
+        return $this->deletedResponse($deleted, "Server");
     }
 }

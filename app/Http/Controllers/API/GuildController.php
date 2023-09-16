@@ -13,54 +13,43 @@ class GuildController extends Controller
     public function index(): JsonResponse
     {
         $guilds = Guild::all();
-        return response()->json(data: $guilds);
+        return $this->allResponse($guilds);
     }
-
 
     public function store(StoreGuildRequest $request): JsonResponse
     {
         $guildData = $request->validated();
+
         $guild = new Guild();
         $guild->server_id = $guildData['server_id'];
         $guild->name = $guildData['name'];
         $guild->description = $guildData['description'];
-        $isGuildCreated = $guild->save();
+        $stored = $guild->save();
 
-        if(!$isGuildCreated){
-            return response()->json('An error occurred', 500);
-        }
-        return response()->json(['message' => 'Guild stored with successful'], 201);
+        return $this->storedResponse($stored, "Guild");
     }
 
     public function show(Guild $guild): JsonResponse
     {
-        return response()->json(data: $guild);
+        return $this->showResponse($guild);
     }
 
-    public function update(UpdateGuildRequest $request, Guild $guild)
+    public function update(UpdateGuildRequest $request, Guild $guild): JsonResponse
     {
 
         $guildNewData = $request->validated();
+
         if (!$guildNewData) {
-            return response()->json(['message' => 'Guild updated with successful']);
-        }
-        $guildUpdated = $guild->update($guildNewData);
-
-        if (!$guildUpdated) {
-            return response()->json('An error occurred', 500);
+            return $this->updateResponse("Guild");
         }
 
-        return response()->json(['message' => 'Guild updated with successful'], 201);
+        $updated = $guild->update($guildNewData);
+        return $this->updatedResponse($updated, "Guild");
     }
 
     public function destroy(Guild $guild): JsonResponse
     {
-        $guildDeleted = $guild->delete();
-
-        if (!$guildDeleted) {
-            return response()->json('An error occurred', 500);
-        }
-
-        return response()->json(['message' => 'Guild deleted with successful'], 201);
+        $deleted = $guild->delete();
+        return $this->deletedResponse($deleted, "Guild");
     }
 }
