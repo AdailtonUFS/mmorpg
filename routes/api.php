@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\GuildController;
 use App\Http\Controllers\API\ServerController;
 use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\WarController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::apiResource('/users', UserController::class);
 Route::apiResource('/servers', ServerController::class);
 Route::apiResource('/guilds', GuildController::class);
+Route::apiResource('/wars', WarController::class);
 
 Route::fallback(function(){
     return response()->json(['message' => 'Endpoint não encontrado.'], 404);
