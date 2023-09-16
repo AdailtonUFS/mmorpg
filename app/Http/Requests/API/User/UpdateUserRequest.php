@@ -14,10 +14,20 @@ class UpdateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'cpf' => 'nullable',
-            'name' => 'nullable',
-            'email' => 'nullable',
+            'cpf' => 'nullable|unique:users',
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|unique:users',
             'password' => 'nullable'
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.string' => 'A name does not contain numbers',
+            'name.max' => 'The name cannot be longer than 255 characters',
+            'cpf.unique' => 'Cpf already exists',
+            'email.unique' => 'Email already exists',
         ];
     }
 }

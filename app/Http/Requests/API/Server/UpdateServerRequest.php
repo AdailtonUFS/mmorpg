@@ -14,7 +14,15 @@ class UpdateServerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'nullable'
+            'name' => 'nullable|string|max:45'
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.string' => 'A name does not contain numbers',
+            'name.max' => 'The name cannot be longer than 45 characters',
         ];
     }
 }
