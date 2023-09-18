@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 /**
  * @property string $name
+ * @property int $id
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
