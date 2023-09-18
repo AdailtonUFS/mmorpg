@@ -50,3 +50,30 @@ FROM "characters" c
 WHERE c.damage = (SELECT MAX(damage) FROM "characters");
 
 
+-- Consulta usando GROUP BY
+SELECT COUNT(C.id) AS quantity_by_difficulty, c2.difficulty
+FROM "characters" c
+         JOIN classes c2 ON c2.id = c.class_id
+GROUP BY c2.difficulty
+ORDER BY quantity_by_difficulty ASC
+
+--Consulta usando operador IN
+-- PENSAR NISSO !!!
+--_______________________________________
+
+--Consulta usando operador EXISTS
+-- PENSAR NISSO !!!
+--_______________________________________
+
+--Consulta usando operador SOME
+-- PENSAR NISSO !!!
+--_______________________________________
+
+--Consulta usando operador ALL
+-- PENSAR NISSO !!!
+--_______________________________________
+
+--Consulta aninhadas no FROM
+-- PENSAR NISSO !!!
+--_______________________________________
+
