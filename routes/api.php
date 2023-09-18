@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\AccountController;
 use App\Http\Controllers\API\GuildController;
 use App\Http\Controllers\API\ServerController;
 use App\Http\Controllers\API\UserController;
@@ -26,6 +27,7 @@ Route::apiResource('/users', UserController::class);
 Route::apiResource('/servers', ServerController::class);
 Route::apiResource('/guilds', GuildController::class);
 Route::apiResource('/wars', WarController::class);
+Route::apiResource('/accounts', AccountController::class)->except(['index']);
 
 Route::fallback(function(){
     return response()->json(['message' => 'Endpoint não encontrado.'], 404);
