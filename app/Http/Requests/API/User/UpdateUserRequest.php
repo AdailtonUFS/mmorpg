@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\API\User;
 
+use App\Rules\ValidCpf;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -13,10 +15,22 @@ class UpdateUserRequest extends FormRequest
 
     public function rules(): array
     {
+
         return [
-            'cpf' => 'nullable|unique:users',
-            'name' => 'nullable|string|max:255',
-            'email' => 'nullable|unique:users',
+            'cpf' => [
+                'nullable',
+                Rule::unique('users', 'cpf')->ignore($this->route('user')),
+                new ValidCpf
+            ],
+            'name' => [
+                'nullable',
+                'string',
+                'max:255'
+            ],
+            'email' => [
+                'nullable',
+                Rule::unique('users', 'cpf')->ignore($this->route('user'))
+            ],
             'password' => 'nullable'
         ];
     }

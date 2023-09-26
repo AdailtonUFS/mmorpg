@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\API\User;
 
+use App\Rules\ValidCpf;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreUserRequest extends FormRequest
@@ -14,9 +15,20 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'cpf' => 'required|unique:users',
-            'name' => 'required|string|max:255',
-            'email' => 'required|unique:users',
+            'cpf' => [
+                'required',
+                'unique:users',
+                new ValidCpf
+            ],
+            'name' => [
+                'required',
+                'string',
+                'max:255'
+            ],
+            'email' => [
+                'required',
+                'unique:users'
+            ],
             'password' => 'required'
         ];
     }
