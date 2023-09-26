@@ -9,38 +9,63 @@ class ValidCpf implements ValidationRule
 {
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (!preg_match('/^\d{3}\.\d{3}\.\d{3}-\d{2}$/', $value)) {
-            $fail('The format is ###.###.###-##');
+        if (!$this->isValidFormat($value)) {
+            $fail('The :attribute format is invalid.');
         }
 
-        $cpfNumber = preg_replace('/[^0-9]/', '', $value);
+        $cpf = $this->cleanCpf($value);
 
-        if (strlen($cpfNumber) != 11 or preg_match('/(\d)\1{10}/', $cpfNumber)) {
-            $fail(':attribute is invalid');
+        if (!$this->hasValidLength($cpf)) {
+            $fail('The :attribute has an invalid length.');
         }
 
-        [$first_digit, $second_digit] = $this->getDigits($cpfNumber);
-
-        if ($first_digit != intval($cpfNumber[9]) || $second_digit != intval($cpfNumber[10])) {
-            $fail(':attribute is invalid');
+        if (!$this->hasValidDigits($cpf)) {
+            $fail('The :attribute is fdigiinvalid.');
         }
     }
 
-    public function getDigits(string $cpfNumber): array
+    private function isValidFormat(string $cpf): bool
     {
-        $sumOfCpfNumbers = 0;
+        return preg_match('/^\d{3}\.\d{3}\.\d{3}-\d{2}$/', $cpf);
+    }
 
-        for ($i = 0; $i < 9; $i++) {
-            $sumOfCpfNumbers += intval($cpfNumber[$i]) * (10 - $i);
+    private function cleanCpf(string $cpf): string
+    {
+        return preg_replace('/[^0-9]/', '', $cpf);
+    }
+
+    private function hasValidLength(string $cpf): bool
+    {
+        return strlen($cpf) === 11;
+    }
+
+    private function hasValidDigits(string $cpf): bool
+    {
+        [$firstDigit, $secondDigit] = $this->calculateVerificationDigits($cpf);
+        return intval($cpf[9]) === $firstDigit && intval($cpf[10]) === $secondDigit;
+    }
+
+    private function calculateVerificationDigits(string $cpf): array
+    {
+        $sumOfDigits = 0;
+        $weight = 10;
+
+        for ($t = 0; $t < 9; $t++) {
+            $sumOfDigits += intval($cpf[$t]) * $weight--;
         }
+        $firstDigit = 11 - ($sumOfDigits % 11);
 
-        $remainder = $sumOfCpfNumbers % 11;
-        $firstDigit = ($remainder < 2) ? 0 : 11 - $remainder;
 
-        $sumOfCpfNumbers += intval($cpfNumber[9]) * (11 - 9);
-        $remainder = $sumOfCpfNumbers % 11;
-        $secondDigit = ($remainder < 2) ? 0 : 11 - $remainder;
+        $sumOfDigits = 0;
+        $weight = 11;
+
+        for ($t = 0; $t < 10; $t++) {
+            $sumOfDigits += intval($cpf[$t]) * $weight--;
+        }
+        $secondDigit = 11 - ($sumOfDigits % 11);
+        echo $secondDigit;
 
         return [$firstDigit, $secondDigit];
     }
+
 }
