@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\API\User\IndexUserRequest;
 use App\Http\Requests\API\User\StoreUserRequest;
 use App\Http\Requests\API\User\UpdateUserRequest;
 use App\Http\Resources\User\UserCollection;
@@ -23,9 +24,10 @@ class UserController extends Controller
         $this->userService = $userService;
     }
 
-    public function index(): JsonResponse
+    public function index(IndexUserRequest $request): JsonResponse
     {
-        $users = User::query()->when()->paginate();
+        $filters = $request->validated();
+        $users = $this->userService->fetch($filters);
 
         return (new UserCollection($users))
             ->response()
