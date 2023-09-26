@@ -5,52 +5,65 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\User\StoreUserRequest;
 use App\Http\Requests\API\User\UpdateUserRequest;
+use App\Http\Resources\User\UserCollection;
+use App\Http\Resources\User\UserResource;
 use App\Models\User;
+use App\Services\UserService;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Hash;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller
 {
+    private UserService $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     public function index(): JsonResponse
     {
-        $users = User::all();
-        return $this->allResponse($users);
+        $users = User::query()->when()->paginate();
+
+        return (new UserCollection($users))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 
     public function store(StoreUserRequest $request): JsonResponse
     {
-        $data = $request->validated();
+        $validatedUserData = $request->validated();
+        $user = $this->userService->create($validatedUserData);
 
-        $user = new User();
-        $user->cpf = $data['cpf'];
-        $user->name = $data['name'];
-        $user->email = $data['email'];
-        $user->password = Hash::make($data['password']);
-        $stored = $user->save();
-
-        return $this->storedResponse($stored, "User");
+        return (new UserResource($user))
+            ->response()
+            ->header('Location', route('users.show', $user))
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 
     public function show(User $user): JsonResponse
     {
-        return $this->showResponse($user);
+        return (new UserResource($user))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 
     public function update(UpdateUserRequest $request, User $user): JsonResponse
     {
         $userNewData = $request->validated();
+        $this->userService->update($user, $userNewData);
 
-        if (!$userNewData) {
-            return $this->updateResponse("User");
-        }
-
-        $updated = $user->update($userNewData);
-        return $this->updatedResponse($updated, "User");
+        return (new UserResource($user))
+            ->response()
+            ->header('Location', route('users.show', $user))
+            ->setStatusCode(Response::HTTP_OK, Response::$statusTexts[Response::HTTP_OK]);
     }
 
-    public function destroy(User $user): JsonResponse
+    public function destroy(User $user): Application|ResponseFactory|\Illuminate\Foundation\Application|\Illuminate\Http\Response
     {
-        $deleted = $user->delete();
-        return $this->deletedResponse($deleted, "User");
+        $user->delete();
+        return response(status: Response::HTTP_NO_CONTENT);
     }
 }
