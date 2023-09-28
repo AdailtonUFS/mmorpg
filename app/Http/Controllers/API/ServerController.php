@@ -46,7 +46,7 @@ class ServerController extends Controller
     {
         return (new ServerResource($server))
             ->response()
-            ->setStatusCode(Response::HTTP_CREATED);
+            ->setStatusCode(Response::HTTP_OK);
     }
 
     public function update(UpdateServerRequest $request, Server $server): JsonResponse
@@ -56,7 +56,7 @@ class ServerController extends Controller
         return (new ServerResource($server))
             ->response()
             ->header('Location', route('servers.show', $server))
-            ->setStatusCode(Response::HTTP_CREATED);
+            ->setStatusCode(Response::HTTP_OK);
     }
 
     public function destroy(Server $server): JsonResponse
