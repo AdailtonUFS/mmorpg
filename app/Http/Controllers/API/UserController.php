@@ -63,9 +63,9 @@ class UserController extends Controller
             ->setStatusCode(Response::HTTP_OK, Response::$statusTexts[Response::HTTP_OK]);
     }
 
-    public function destroy(User $user): Application|ResponseFactory|\Illuminate\Foundation\Application|\Illuminate\Http\Response
+    public function destroy(User $user): JsonResponse
     {
-        $user->delete();
-        return response(status: Response::HTTP_NO_CONTENT);
+        $this->userService->delete($user);
+        return response()->json(null, status: Response::HTTP_NO_CONTENT);
     }
 }
