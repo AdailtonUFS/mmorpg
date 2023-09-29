@@ -20,7 +20,7 @@ class ValidCpf implements ValidationRule
         }
 
         if (!$this->hasValidDigits($cpf)) {
-            $fail('The :attribute is fdigiinvalid.');
+            $fail('The :attribute is invalid.');
         }
     }
 
@@ -63,7 +63,6 @@ class ValidCpf implements ValidationRule
             $sumOfDigits += intval($cpf[$t]) * $weight--;
         }
         $secondDigit = 11 - ($sumOfDigits % 11);
-        echo $secondDigit;
 
         return [$firstDigit, $secondDigit];
     }
