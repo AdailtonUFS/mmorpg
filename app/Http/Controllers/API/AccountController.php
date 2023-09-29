@@ -5,45 +5,54 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Account\StoreAccountRequest;
 use App\Http\Requests\API\Account\UpdateAccountRequest;
+use App\Http\Resources\Account\AccountResource;
 use App\Models\Account;
+use App\Services\AccountService;
 use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class AccountController extends Controller
 {
+    private AccountService $accountService;
+
+    public function __construct(AccountService $accountService)
+    {
+        $this->accountService = $accountService;
+    }
+
     public function store(StoreAccountRequest $request): JsonResponse
     {
         $accountData = $request->validated();
+        $account = $this->accountService->create($accountData);
 
-        $account = new Account();
-        $account->user_cpf = $accountData['user_cpf'];
-        $account->server_id = $accountData['server_id'];
-        $account->status = $accountData['status'];
-        $stored = $account->save();
-
-        return $this->storedResponse($stored, "Account");
+        return (new AccountResource($account))
+            ->response()
+            ->header('Location', route('accounts.show', $account))
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 
     public function show(Account $account): JsonResponse
     {
-        return $this->showResponse($account);
+        return (new AccountResource($account))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 
     public function update(UpdateAccountRequest $request, Account $account): JsonResponse
     {
         $accountNewData = $request->validated();
+        $account = $this->accountService->update($account, $accountNewData);
 
-        if (!$accountNewData) {
-            return $this->updateResponse("Account");
-        }
-
-        $updated = $account->update($accountNewData);
-        return $this->updatedResponse($updated, "Account");
+        return (new AccountResource($account))
+            ->response()
+            ->header('Location', route('accounts.show', $account))
+            ->setStatusCode(Response::HTTP_OK);
     }
 
 
     public function destroy(Account $account): JsonResponse
     {
-        $deleted = $account->delete();
-        return $this->deletedResponse($deleted, "Account");
+        $this->accountService->delete($account);
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }
