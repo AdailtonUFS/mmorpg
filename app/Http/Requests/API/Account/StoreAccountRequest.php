@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API\Account;
 
 use App\Enums\AccountStatus;
+use App\Rules\ValidCpf;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
@@ -21,8 +22,8 @@ class StoreAccountRequest extends FormRequest
                 'required',
                 'string',
                 'exists:users,cpf',
-                'regex:/^\d{3}\.\d{3}\.\d{3}-\d{2}$/',
                 'max:14',
+                new ValidCpf,
                 Rule::unique('accounts')->where(function ($query) {
                     return $query->where('server_id', $this->input('server_id'));
                 }),
