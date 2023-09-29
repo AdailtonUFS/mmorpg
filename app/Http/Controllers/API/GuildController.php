@@ -3,53 +3,68 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\API\Guild\IndexGuildRequest;
 use App\Http\Requests\API\Guild\StoreGuildRequest;
 use App\Http\Requests\API\Guild\UpdateGuildRequest;
+use App\Http\Resources\Guild\GuildCollection;
+use App\Http\Resources\Guild\GuildResource;
 use App\Models\Guild;
+use App\Services\GuildService;
 use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class GuildController extends Controller
 {
-    public function index(): JsonResponse
+    private GuildService $guildService;
+
+    public function __construct(GuildService $guildService)
     {
-        $guilds = Guild::all();
-        return $this->allResponse($guilds);
+        $this->guildService = $guildService;
+    }
+
+    public function index(IndexGuildRequest $request): JsonResponse
+    {
+        $filters = $request->validated();
+        $guilds = $this->guildService->fetch($filters);
+
+        return (new GuildCollection($guilds))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 
     public function store(StoreGuildRequest $request): JsonResponse
     {
         $guildData = $request->validated();
+        $guild = $this->guildService->create($guildData);
 
-        $guild = new Guild();
-        $guild->server_id = $guildData['server_id'];
-        $guild->name = $guildData['name'];
-        $guild->description = $guildData['description'];
-        $stored = $guild->save();
-
-        return $this->storedResponse($stored, "Guild");
+        return (new GuildResource($guild))
+            ->response()
+            ->header('Location', route('guilds.show', $guild))
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 
     public function show(Guild $guild): JsonResponse
     {
-        return $this->showResponse($guild);
+        return (new GuildResource($guild))
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 
     public function update(UpdateGuildRequest $request, Guild $guild): JsonResponse
     {
 
         $guildNewData = $request->validated();
+        $guild = $this->guildService->update($guild, $guildNewData);
 
-        if (!$guildNewData) {
-            return $this->updateResponse("Guild");
-        }
-
-        $updated = $guild->update($guildNewData);
-        return $this->updatedResponse($updated, "Guild");
+        return (new GuildResource($guild))
+            ->response()
+            ->header('Location', route('guilds.show', $guild))
+            ->setStatusCode(Response::HTTP_OK);
     }
 
     public function destroy(Guild $guild): JsonResponse
     {
-        $deleted = $guild->delete();
-        return $this->deletedResponse($deleted, "Guild");
+        $this->guildService->delete($guild);
+        return response()->json(null, status: Response::HTTP_NO_CONTENT);
     }
 }
