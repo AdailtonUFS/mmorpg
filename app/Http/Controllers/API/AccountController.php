@@ -8,6 +8,7 @@ use App\Http\Requests\API\Account\UpdateAccountRequest;
 use App\Http\Resources\Account\AccountResource;
 use App\Models\Account;
 use App\Services\AccountService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,6 +21,9 @@ class AccountController extends Controller
         $this->accountService = $accountService;
     }
 
+    /**
+     * @throws Exception
+     */
     public function store(StoreAccountRequest $request): JsonResponse
     {
         $accountData = $request->validated();
