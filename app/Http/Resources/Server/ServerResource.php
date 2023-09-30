@@ -19,6 +19,7 @@ class ServerResource extends JsonResource
             'name' => $this->name,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'status' => $this?->current_status()?->first()?->status ?? null,
         ];
     }
 }

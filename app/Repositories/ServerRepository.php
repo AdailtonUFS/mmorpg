@@ -10,6 +10,7 @@ class ServerRepository
     public function fetch(array $filters): LengthAwarePaginator
     {
         return Server::query()
+            ->with('current_status')
             ->when(isset($filters['name']), function ($query) use ($filters) {
                 return $query->where('name', 'like', '%' . $filters['name'] . '%');
             })
