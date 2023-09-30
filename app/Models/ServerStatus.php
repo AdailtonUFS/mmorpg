@@ -14,4 +14,6 @@ use Illuminate\Database\Eloquent\Model;
 class ServerStatus extends Model
 {
     use HasFactory;
+
+    protected $table = "server_status";
 }
