@@ -23,7 +23,7 @@ class GuildResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
-        $withWars = $request->get('wars');
+        $withWars = $request->get('with_wars');
         if ($withWars != null){
             $data['wars'] = $this->wars->toArray();
         }

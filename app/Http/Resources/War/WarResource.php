@@ -14,11 +14,16 @@ class WarResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
+        $data = [
             'id' => $this->id,
             'name' => $this->name,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at
         ];
+        $withGuilds = $request->get('with_guilds');
+        if ($withGuilds != null){
+            $data['guilds'] = $this->guilds->toArray();
+        }
+        return $data;
     }
 }
