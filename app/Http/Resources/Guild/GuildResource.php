@@ -14,14 +14,19 @@ class GuildResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
+        $data = [
             'id' => $this->id,
             'name' => $this->name,
             'server_id' => $this->server_id,
             'shield_file_url' => $this->shield_file_url,
             'description' => $this->description,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
+            'updated_at' => $this->updated_at,
         ];
+        $withWars = $request->get('wars');
+        if ($withWars != null){
+            $data['wars'] = $this->wars->toArray();
+        }
+        return $data;
     }
 }
