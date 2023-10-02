@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,8 +12,10 @@ return new class extends Migration
     {
         Schema::create('guild_war', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('guild_id')->constrained();
-            $table->foreignId('war_id')->constrained();
+            $table->foreignId('guild_id')->constrained()->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreignId('war_id')->constrained()->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->boolean('winner')->nullable();
             $table->timestamps();
         });
