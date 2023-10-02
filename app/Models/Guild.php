@@ -5,6 +5,8 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
 /**
  * @property integer $server_id
  * @property string $name
@@ -24,4 +26,9 @@ class Guild extends Model
         'shield_file_url',
         'description',
     ];
+
+    public function wars(): BelongsToMany
+    {
+        return $this->belongsToMany(War::class,'guild_war', 'guild_id', 'war_id')->withTimestamps();
+    }
 }
