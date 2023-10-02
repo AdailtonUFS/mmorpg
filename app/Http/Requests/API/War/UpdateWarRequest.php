@@ -14,7 +14,9 @@ class UpdateWarRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'nullable|max:45'
+            'name' => ['nullable', 'max:45'],
+            'guilds' => 'array',
+            'guilds.*' => ['integer', 'exists:App\Models\Guild,id']
         ];
     }
 

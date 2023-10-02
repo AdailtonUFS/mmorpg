@@ -15,7 +15,9 @@ class StoreWarRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|max:45'
+            'name' => ['required','max:45'],
+            'guilds' => 'array',
+            'guilds.*' => ['integer', 'exists:App\Models\Guild,id']
         ];
     }
 
