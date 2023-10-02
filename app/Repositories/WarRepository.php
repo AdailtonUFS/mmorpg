@@ -18,11 +18,18 @@ class WarRepository
 
     public function create(array $warData): War
     {
-        return War::create($warData);
+        $war = War::create($warData);
+        if ($warData['guilds']){
+            $war->guilds()->attach($warData['guilds']);
+        }
+        return $war;
     }
 
     public function update(War $war, array $newWarData): void
     {
+        if ($newWarData['guilds']){
+            $war->guilds()->sync($newWarData['guilds']);
+        }
         $war->update($newWarData);
     }
 
