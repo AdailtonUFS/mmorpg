@@ -13,8 +13,14 @@ WHERE name LIKE 'Sr.%';
 
 
 -- Consulta usando operadores de conjuntos
--- PENSAR NISSO!!!!!!!!!!!!!!!!!!!!!!!!!!!
---___________________________________________
+-- Buscar o nome e level dos players 61 e 62
+SELECT c.name AS character_name, c.level AS character_level
+FROM characters c
+WHERE c.account_id = 61
+UNION
+SELECT c.name AS character_name, c.level AS character_level
+FROM characters c
+WHERE c.account_id = 62;
 
 
 -- Consulta usando um JOIN
@@ -37,8 +43,11 @@ WHERE c.damage >= 100
 
 
 -- Consulta usando OUTER JOIN
--- PENSAR NISSO !!!!!!!!!!!!!!!
---_______________________________________
+-- Buscar as informações da conta e caso exista buscar informações de personagem
+SELECT u.name AS user_name, a.status AS account_status, c.name AS character_name, c.level AS character_level
+FROM users u
+         LEFT OUTER JOIN accounts a ON u.cpf = a.user_cpf
+         LEFT OUTER JOIN characters c ON a.id = c.account_id;
 
 
 -- Consulta usando função de agregação
@@ -57,23 +66,52 @@ FROM "characters" c
 GROUP BY c2.difficulty
 ORDER BY quantity_by_difficulty ASC
 
---Consulta usando operador IN
--- PENSAR NISSO !!!
---_______________________________________
 
---Consulta usando operador EXISTS
--- PENSAR NISSO !!!
---_______________________________________
+-- Consulta usando operador IN
+-- Buscar contas ativas nos servers 1, 2 e 3
+SELECT *
+FROM accounts
+WHERE server_id IN (1, 2, 3) AND status = 'active';
+
+-- Consulta usando operador EXISTS
+-- Buscar contas que têm pelo menos um personagem com nível >50
+SELECT *
+FROM accounts a
+WHERE EXISTS (
+    SELECT 1
+    FROM characters c
+    WHERE c.account_id = a.id
+      AND c.level >= 450
+);
 
 --Consulta usando operador SOME
--- PENSAR NISSO !!!
---_______________________________________
 
---Consulta usando operador ALL
--- PENSAR NISSO !!!
---_______________________________________
+SELECT name, level
+FROM guilds
+WHERE level >= SOME (
+    SELECT level
+    FROM guilds
+    WHERE name = 'MinhaGuilda'
+);
 
---Consulta aninhadas no FROM
--- PENSAR NISSO !!!
---_______________________________________
+-- Consulta usando operador ALL
+-- Buscar todos os servidores nos quais todos os usuários sejam ativos
+SELECT s.id, s.name
+FROM servers s
+WHERE 'active' = ALL (
+    SELECT a.status
+    FROM accounts a
+    WHERE a.server_id = s.id
+);
+
+-- Consulta aninhadas no FROM
+-- Buscar todas as guilds que participaram de uma guerra
+SELECT g.name AS guild_name
+FROM guilds g
+WHERE EXISTS (
+    SELECT 1
+    FROM guild_war gw
+             INNER JOIN guild_war gg ON g.id = gg.guild_id
+    WHERE gw.war_id = gg.war_id
+);
 
